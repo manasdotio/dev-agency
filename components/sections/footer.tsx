@@ -1,0 +1,112 @@
+import { AssetImage } from "@/components/shared/asset-image";
+import { socialLinks } from "@/lib/site-data";
+
+export function Footer() {
+  return (
+    <footer className="footer">
+      <div className="w-layout-blockcontainer container-14 w-container">
+        <div className="w-layout-hflex grid-19">
+          <div className="footer-column-1">
+            <div>
+              <AssetImage src="/images/69afb0934a0a9b77eaf02483_Frame%202.png" loading="lazy" alt="Awake" width={164} height={42} />
+            </div>
+
+            <div className="text-block-32">
+              Empowering businesses with innovative solutions. Let&apos;s create something amazing together.
+            </div>
+
+            <div className="div-block-42">
+              {socialLinks.map((item) => (
+                <a key={item.href} href={item.href} className="footer-social-icon w-inline-block">
+                  <img src={item.icon} loading="lazy" alt={item.alt} />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div className="w-layout-hflex flex-block-2">
+            <div className="footer-column-2">
+              <div className="title">Sitemap</div>
+              <ul role="list" className="list-5 w-list-unstyled">
+                {[
+                  ["About us", "#about-us"],
+                  ["Work", "#work"],
+                  ["Services", "#services"],
+                  ["Pricing", "#pricing"]
+                ].map(([label, href]) => (
+                  <li key={label} className="list-item-9">
+                    <a href={href} className="navigation-link for-footer w-inline-block">
+                      <div className="nav-text first">{label}</div>
+                      <div className="nav-text second">{label}</div>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="footer-column-3">
+              <div className="title">Other Pages</div>
+              <ul role="list" className="list-5 w-list-unstyled">
+                {[
+                  ["Contact Us", "/contact"],
+                  ["Error 404", "/404"]
+                ].map(([label, href]) => (
+                  <li key={label} className="list-item-9">
+                    <a href={href} className="navigation-link for-footer w-inline-block">
+                      <div className="nav-text first">{label}</div>
+                      <div className="nav-text second">{label}</div>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="footer-column-4">
+              <div className="title">Contact Details</div>
+              <ul role="list" className="list-5 w-list-unstyled">
+                <li className="list-item-9">
+                  <div className="text-block-32">81 Rivington Street London EC2A 3AY</div>
+                </li>
+                <li className="list-item-9">
+                  <a href="mailto:hello@awake.agnecy" className="navigation-link for-footer w-inline-block">
+                    <div className="nav-text first">hello@awake.agnecy</div>
+                    <div className="nav-text second">hello@awake.agnecy</div>
+                  </a>
+                </li>
+                <li className="list-item-9">
+                  <a href="tel:01051923556" className="navigation-link for-footer w-inline-block">
+                    <div className="nav-text first">0105 192 3556</div>
+                    <div className="nav-text second">0105 192 3556</div>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div className="div-block-43">
+          <div className="w-layout-blockcontainer container-15 w-container">
+            <div className="div-block-209">
+              <div className="text-block-33">
+                &copy;2025 Awake. All Rights Reserved. Powered by <a href="https://webflow.com/" className="webflow-link">Webflow</a>
+              </div>
+
+              <div className="div-block-210">
+                {[
+                  ["Style Guide", "/style-guide"],
+                  ["Licenses", "/licenses"],
+                  ["Changelog", "/changelog"]
+                ].map(([label, href]) => (
+                  <a key={label} href={href} className="navigation-link for-footer w-inline-block">
+                    <div className="nav-text first">{label}</div>
+                    <div className="nav-text second">{label}</div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
