@@ -26,10 +26,7 @@ const coreVendorScripts = [
 ];
 
 const optionalVendorScripts = [
-  "/vendor/countup.js",
-  "/vendor/gsap.min.js",
-  "/vendor/SplitText.min.js",
-  "/vendor/ScrollTrigger.min.js"
+  "/vendor/countup.js"
 ];
 
 const MOBILE_MEDIA_QUERY = "(max-width: 991px)";
@@ -95,11 +92,13 @@ async function initLenis() {
 
   const { default: Lenis } = await import("lenis");
   const lenis = new Lenis({
-    duration: isMobileRuntime ? 1.15 : 1,
-    smoothWheel: true,
-    wheelMultiplier: isMobileRuntime ? 0.75 : 0.85,
-    touchMultiplier: isMobileRuntime ? 0.95 : 1,
-    lerp: isMobileRuntime ? 0.06 : 0.08
+    duration: isMobileRuntime ? 1.25 : 1,
+    smoothWheel: !isMobileRuntime,
+    wheelMultiplier: isMobileRuntime ? 1 : 0.85,
+    touchMultiplier: isMobileRuntime ? 1.06 : 1,
+    lerp: isMobileRuntime ? 0.1 : 0.08,
+    syncTouch: isMobileRuntime,
+    syncTouchLerp: isMobileRuntime ? 0.1 : 0
   });
 
   lenis.on("scroll", () => {
