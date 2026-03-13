@@ -1,9 +1,3 @@
-@media (min-width: 992px) {
-  html.w-mod-js:not(.w-mod-ix3) :is(.pricing-heading-h2, .c2a-title, .crafting-heading, .testimonial-heading-h2, .home-heading-h2, .navigation-link.for-footer, .our-work-heading, .heading-20, .achevement-heading-h2, .creative-mind-heading, .hero-heading-h1, .about-card-2) {
-    visibility: hidden !important;
-  }
-}
-
 @media (max-width: 991px) {
   [data-w-id] {
     opacity: 1 !important;

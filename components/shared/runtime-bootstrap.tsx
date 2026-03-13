@@ -206,11 +206,9 @@ export function RuntimeBootstrap() {
     };
 
     const queueBoot = () => {
-      runWhenBrowserIsIdle(() => {
-        if (!cancelled) {
-          void boot();
-        }
-      });
+      if (!cancelled) {
+        void boot();
+      }
     };
 
     if (document.readyState === "complete") {
