@@ -25,8 +25,6 @@ const coreVendorScripts = [
   "/vendor/webflow.994ddc64.748409a2013fd8b7.js"
 ];
 
-const optionalVendorScripts: string[] = [];
-
 const MOBILE_MEDIA_QUERY = "(max-width: 991px)";
 
 function loadScript(src: string) {
@@ -134,52 +132,13 @@ async function initLenis() {
   };
 }
 
-function runWhenBrowserIsIdle(callback: () => void) {
-  if ("requestIdleCallback" in window) {
-    const requestIdleCallbackFn = window.requestIdleCallback as (
-      cb: () => void,
-      options?: { timeout?: number }
-    ) => number;
-
-    requestIdleCallbackFn(callback, { timeout: 3000 });
-    return;
-  }
-
-  globalThis.setTimeout(callback, 1200);
-}
-
 export function RuntimeBootstrap() {
   useEffect(() => {
     let cancelled = false;
     let hasBooted = false;
-    let optionalScriptsLoaded = false;
     let initialFrameId = 0;
 
     prepareDocument();
-
-    const loadOptionalScripts = () => {
-      if (optionalScriptsLoaded || cancelled) {
-        return;
-      }
-
-      if (!optionalVendorScripts.length) {
-        optionalScriptsLoaded = true;
-        return;
-      }
-
-      optionalScriptsLoaded = true;
-
-      runWhenBrowserIsIdle(() => {
-        void (async () => {
-          for (const src of optionalVendorScripts) {
-            await loadScript(src);
-            if (cancelled) {
-              return;
-            }
-          }
-        })();
-      });
-    };
 
     const boot = async () => {
       if (hasBooted) {
@@ -203,8 +162,6 @@ export function RuntimeBootstrap() {
       }
 
       window.__awakeLenisCleanup = lenisCleanup;
-
-      loadOptionalScripts();
     };
 
     initialFrameId = window.requestAnimationFrame(() => {
