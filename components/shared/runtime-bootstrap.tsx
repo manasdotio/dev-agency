@@ -25,9 +25,7 @@ const coreVendorScripts = [
   "/vendor/webflow.994ddc64.748409a2013fd8b7.js"
 ];
 
-const optionalVendorScripts = [
-  "/vendor/countup.js"
-];
+const optionalVendorScripts: string[] = [];
 
 const MOBILE_MEDIA_QUERY = "(max-width: 991px)";
 
@@ -155,11 +153,17 @@ export function RuntimeBootstrap() {
     let cancelled = false;
     let hasBooted = false;
     let optionalScriptsLoaded = false;
+    let initialFrameId = 0;
 
     prepareDocument();
 
     const loadOptionalScripts = () => {
       if (optionalScriptsLoaded || cancelled) {
+        return;
+      }
+
+      if (!optionalVendorScripts.length) {
+        optionalScriptsLoaded = true;
         return;
       }
 
@@ -203,12 +207,15 @@ export function RuntimeBootstrap() {
       loadOptionalScripts();
     };
 
-    if (!cancelled) {
-      void boot();
-    }
+    initialFrameId = window.requestAnimationFrame(() => {
+      if (!cancelled) {
+        void boot();
+      }
+    });
 
     return () => {
       cancelled = true;
+      window.cancelAnimationFrame(initialFrameId);
       window.__awakeLenisCleanup?.();
       window.__awakeLenisCleanup = undefined;
     };

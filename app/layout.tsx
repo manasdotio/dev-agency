@@ -65,7 +65,13 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <link rel="preload" as="image" href="/images/69afb0934a0a9b77eaf02483_Frame%202.png" fetchPriority="high" />
+        <link
+          rel="preload"
+          as="image"
+          href="/images/69afb0934a0a9b77eaf024d8_background-gradient.webp"
+          fetchPriority="high"
+          media="(min-width: 992px)"
+        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link

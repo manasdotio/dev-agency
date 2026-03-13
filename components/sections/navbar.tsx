@@ -1,5 +1,3 @@
-import { AssetImage } from "@/components/shared/asset-image";
-
 export function Navbar() {
   return (
     <>
@@ -17,13 +15,14 @@ export function Navbar() {
             <div data-w-id="03b7d350-5f42-547a-b4d6-be27ef8aff04" className="navbar-wrapper-3">
               <div className="div-block-2">
                 <a href="/" aria-current="page" className="navbar-brand-2 w-nav-brand w--current">
-                  <AssetImage
-                    priority
-                    fetchPriority="high"
+                  <img
                     src="/images/69afb0934a0a9b77eaf02483_Frame%202.png"
                     alt="Awake"
-                    width={164}
-                    height={42}
+                    width="164"
+                    height="42"
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
                   />
                 </a>
               </div>
