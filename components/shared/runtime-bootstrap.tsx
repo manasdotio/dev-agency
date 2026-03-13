@@ -154,7 +154,6 @@ export function RuntimeBootstrap() {
   useEffect(() => {
     let cancelled = false;
     let hasBooted = false;
-    let removeMobileInteractionListeners = () => undefined;
     let optionalScriptsLoaded = false;
 
     prepareDocument();
@@ -185,6 +184,13 @@ export function RuntimeBootstrap() {
 
       hasBooted = true;
 
+      for (const src of coreVendorScripts) {
+        await loadScript(src);
+        if (cancelled) {
+          return;
+        }
+      }
+
       const lenisCleanup = await initLenis();
 
       if (cancelled) {
@@ -194,39 +200,15 @@ export function RuntimeBootstrap() {
 
       window.__awakeLenisCleanup = lenisCleanup;
 
-      for (const src of coreVendorScripts) {
-        await loadScript(src);
-        if (cancelled) {
-          return;
-        }
-      }
-
       loadOptionalScripts();
     };
 
-    const queueBoot = () => {
-      if (!cancelled) {
-        void boot();
-      }
-    };
-
-    if (document.readyState === "complete") {
-      queueBoot();
-    } else {
-      const onWindowLoad = () => {
-        queueBoot();
-      };
-
-      window.addEventListener("load", onWindowLoad, { once: true });
-
-      removeMobileInteractionListeners = () => {
-        window.removeEventListener("load", onWindowLoad);
-      };
+    if (!cancelled) {
+      void boot();
     }
 
     return () => {
       cancelled = true;
-      removeMobileInteractionListeners();
       window.__awakeLenisCleanup?.();
       window.__awakeLenisCleanup = undefined;
     };

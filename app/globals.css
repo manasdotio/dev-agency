@@ -1,9 +1,3 @@
-@media (max-width: 991px) {
-  [data-w-id] {
-    opacity: 1 !important;
-  }
-}
-
 .w-webflow-badge {
   display: none !important;
 }
