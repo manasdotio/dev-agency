@@ -84,8 +84,8 @@ function prepareDocument() {
 }
 
 async function initLenis() {
-  const shouldDisableLenis =
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+  const shouldDisableLenis = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const isMobileRuntime =
     window.matchMedia(MOBILE_MEDIA_QUERY).matches ||
     window.matchMedia("(pointer: coarse)").matches;
 
@@ -95,11 +95,11 @@ async function initLenis() {
 
   const { default: Lenis } = await import("lenis");
   const lenis = new Lenis({
-    duration: 1,
+    duration: isMobileRuntime ? 1.15 : 1,
     smoothWheel: true,
-    wheelMultiplier: 0.85,
-    touchMultiplier: 1,
-    lerp: 0.08
+    wheelMultiplier: isMobileRuntime ? 0.75 : 0.85,
+    touchMultiplier: isMobileRuntime ? 0.95 : 1,
+    lerp: isMobileRuntime ? 0.06 : 0.08
   });
 
   lenis.on("scroll", () => {
@@ -155,10 +155,8 @@ export function RuntimeBootstrap() {
   useEffect(() => {
     let cancelled = false;
     let hasBooted = false;
-    let mobileFallbackTimeoutId = 0;
     let removeMobileInteractionListeners = () => undefined;
     let optionalScriptsLoaded = false;
-    let removeOptionalScriptListeners = () => undefined;
 
     prepareDocument();
 
@@ -181,26 +179,7 @@ export function RuntimeBootstrap() {
       });
     };
 
-    const setupOptionalScriptInteractionLoad = () => {
-      const onFirstInteraction = () => {
-        removeOptionalScriptListeners();
-        loadOptionalScripts();
-      };
-
-      const interactionEvents: Array<keyof WindowEventMap> = ["pointerdown", "touchstart", "keydown"];
-
-      removeOptionalScriptListeners = () => {
-        for (const eventName of interactionEvents) {
-          window.removeEventListener(eventName, onFirstInteraction);
-        }
-      };
-
-      for (const eventName of interactionEvents) {
-        window.addEventListener(eventName, onFirstInteraction, { once: true, passive: true });
-      }
-    };
-
-    const boot = async (_isMobileBoot: boolean) => {
+    const boot = async () => {
       if (hasBooted) {
         return;
       }
@@ -222,54 +201,23 @@ export function RuntimeBootstrap() {
           return;
         }
       }
+
+      loadOptionalScripts();
     };
 
-    const queueBoot = (isMobileBoot: boolean) => {
+    const queueBoot = () => {
       runWhenBrowserIsIdle(() => {
         if (!cancelled) {
-          void boot(isMobileBoot);
+          void boot();
         }
       });
     };
 
-    const isMobileRuntime =
-      window.matchMedia(MOBILE_MEDIA_QUERY).matches ||
-      window.matchMedia("(pointer: coarse)").matches;
-
-    setupOptionalScriptInteractionLoad();
-
-    if (isMobileRuntime) {
-      const onFirstInteraction = () => {
-        removeMobileInteractionListeners();
-        queueBoot(true);
-      };
-
-      const interactionEvents: Array<keyof WindowEventMap> = ["pointerdown", "touchstart", "keydown", "scroll"];
-
-      removeMobileInteractionListeners = () => {
-        for (const eventName of interactionEvents) {
-          window.removeEventListener(eventName, onFirstInteraction);
-        }
-
-        if (mobileFallbackTimeoutId) {
-          window.clearTimeout(mobileFallbackTimeoutId);
-          mobileFallbackTimeoutId = 0;
-        }
-      };
-
-      for (const eventName of interactionEvents) {
-        window.addEventListener(eventName, onFirstInteraction, { once: true, passive: true });
-      }
-
-      mobileFallbackTimeoutId = window.setTimeout(() => {
-        removeMobileInteractionListeners();
-        queueBoot(true);
-      }, 5000);
-    } else if (document.readyState === "complete") {
-      queueBoot(false);
+    if (document.readyState === "complete") {
+      queueBoot();
     } else {
       const onWindowLoad = () => {
-        queueBoot(false);
+        queueBoot();
       };
 
       window.addEventListener("load", onWindowLoad, { once: true });
@@ -282,7 +230,6 @@ export function RuntimeBootstrap() {
     return () => {
       cancelled = true;
       removeMobileInteractionListeners();
-      removeOptionalScriptListeners();
       window.__awakeLenisCleanup?.();
       window.__awakeLenisCleanup = undefined;
     };
