@@ -22,7 +22,7 @@ export default function Page() {
       <About />
       <Features />
       <WorkShowcase />
-      <Team />
+      {/* <Team /> */}
       <Testimonials />
       <Pricing />
       <Faq />

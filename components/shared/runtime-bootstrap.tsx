@@ -12,6 +12,16 @@ declare global {
       }) => void;
     };
     __awakeLenisCleanup?: () => void;
+    gsap?: {
+      ticker?: {
+        add: (callback: (time: number) => void) => void;
+        remove: (callback: (time: number) => void) => void;
+        lagSmoothing: (threshold: number) => void;
+      };
+    };
+    ScrollTrigger?: {
+      update: () => void;
+    };
   }
 }
 
@@ -76,10 +86,38 @@ function prepareDocument() {
 }
 
 async function initLenis() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return () => undefined;
+  }
+
   const { default: Lenis } = await import("lenis");
   const lenis = new Lenis({
-    lerp: 0.1
+    duration: 1,
+    smoothWheel: true,
+    wheelMultiplier: 0.85,
+    touchMultiplier: 1,
+    lerp: 0.08
   });
+
+  lenis.on("scroll", () => {
+    window.ScrollTrigger?.update();
+  });
+
+  const gsapTicker = window.gsap?.ticker;
+
+  if (gsapTicker) {
+    const onTick = (time: number) => {
+      lenis.raf(time * 1000);
+    };
+
+    gsapTicker.add(onTick);
+    gsapTicker.lagSmoothing(0);
+
+    return () => {
+      gsapTicker.remove(onTick);
+      lenis.destroy();
+    };
+  }
 
   let frameId = 0;
 
