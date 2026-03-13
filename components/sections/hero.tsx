@@ -21,6 +21,8 @@ export function Hero() {
                 <img
                   src="/images/69afb0934a0a9b77eaf02490_arrow-top-right.png"
                   loading="lazy"
+                  width="18"
+                  height="18"
                   alt="arrow-top"
                   className="arrow-img"
                 />
@@ -37,11 +39,11 @@ export function Hero() {
             </div>
 
             <div className="rating-div">
-              <img loading="lazy" src="/images/69afb0934a0a9b77eaf024fa_star-icon.svg" alt="star-icon" className="star-icon" />
-              <img loading="lazy" src="/images/69afb0934a0a9b77eaf024fa_star-icon.svg" alt="star-icon" className="star-icon" />
-              <img loading="lazy" src="/images/69afb0934a0a9b77eaf024fa_star-icon.svg" alt="star-icon" className="star-icon" />
-              <img loading="lazy" src="/images/69afb0934a0a9b77eaf024fa_star-icon.svg" alt="star-icon" className="star-icon" />
-              <img loading="lazy" src="/images/69afb0934a0a9b77eaf024f9_star-half-icon.svg" alt="star-icon" className="star-half-icon" />
+              <img loading="lazy" width="14" height="14" src="/images/69afb0934a0a9b77eaf024fa_star-icon.svg" alt="star-icon" className="star-icon" />
+              <img loading="lazy" width="14" height="14" src="/images/69afb0934a0a9b77eaf024fa_star-icon.svg" alt="star-icon" className="star-icon" />
+              <img loading="lazy" width="14" height="14" src="/images/69afb0934a0a9b77eaf024fa_star-icon.svg" alt="star-icon" className="star-icon" />
+              <img loading="lazy" width="14" height="14" src="/images/69afb0934a0a9b77eaf024fa_star-icon.svg" alt="star-icon" className="star-icon" />
+              <img loading="lazy" width="14" height="14" src="/images/69afb0934a0a9b77eaf024f9_star-half-icon.svg" alt="star-icon" className="star-half-icon" />
               <p className="trusted-text">Trusted by 200+ clients</p>
             </div>
           </div>

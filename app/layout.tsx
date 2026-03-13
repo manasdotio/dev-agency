@@ -64,6 +64,15 @@ export default function RootLayout({
       data-wf-status="1"
       suppressHydrationWarning
     >
+      <head>
+        <link rel="preload" as="image" href="/images/69afb0934a0a9b77eaf02483_Frame%202.png" fetchPriority="high" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500;600;700&display=swap"
+        />
+      </head>
       <body className="body">
         {children}
         <RuntimeBootstrap />

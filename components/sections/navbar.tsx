@@ -19,6 +19,7 @@ export function Navbar() {
                 <a href="/" aria-current="page" className="navbar-brand-2 w-nav-brand w--current">
                   <AssetImage
                     priority
+                    fetchPriority="high"
                     src="/images/69afb0934a0a9b77eaf02483_Frame%202.png"
                     alt="Awake"
                     width={164}
@@ -58,6 +59,8 @@ export function Navbar() {
                   <img
                     data-w-id="03b7d350-5f42-547a-b4d6-be27ef8aff18"
                     loading="lazy"
+                    width="20"
+                    height="20"
                     alt="menu-icon"
                     src="/images/69afb0934a0a9b77eaf024d6_menu-icon.svg"
                     className="image-28"
@@ -91,6 +94,8 @@ export function Navbar() {
                 <img
                   data-w-id="03b7d350-5f42-547a-b4d6-be27ef8aff21"
                   loading="lazy"
+                  width="20"
+                  height="20"
                   alt="close-icon"
                   src="/images/69afb0934a0a9b77eaf024d7_cross-black.svg"
                   className="image-9"

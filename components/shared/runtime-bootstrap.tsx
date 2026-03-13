@@ -4,13 +4,6 @@ import { useEffect } from "react";
 
 declare global {
   interface Window {
-    WebFont?: {
-      load: (config: {
-        google: {
-          families: string[];
-        };
-      }) => void;
-    };
     __awakeLenisCleanup?: () => void;
     gsap?: {
       ticker?: {
@@ -25,16 +18,21 @@ declare global {
   }
 }
 
-const vendorScripts = [
+const coreVendorScripts = [
   "/vendor/jquery-3.5.1.min.dc5e7f18c8.js",
-  "/vendor/countup.js",
-  "/vendor/gsap.min.js",
-  "/vendor/SplitText.min.js",
-  "/vendor/ScrollTrigger.min.js",
   "/vendor/webflow.schunk.36b8fb49256177c8.js",
   "/vendor/webflow.schunk.bd6972bf39a835cd.js",
   "/vendor/webflow.994ddc64.748409a2013fd8b7.js"
 ];
+
+const optionalVendorScripts = [
+  "/vendor/countup.js",
+  "/vendor/gsap.min.js",
+  "/vendor/SplitText.min.js",
+  "/vendor/ScrollTrigger.min.js"
+];
+
+const MOBILE_MEDIA_QUERY = "(max-width: 991px)";
 
 function loadScript(src: string) {
   return new Promise<void>((resolve, reject) => {
@@ -86,7 +84,12 @@ function prepareDocument() {
 }
 
 async function initLenis() {
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  const shouldDisableLenis =
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+    window.matchMedia(MOBILE_MEDIA_QUERY).matches ||
+    window.matchMedia("(pointer: coarse)").matches;
+
+  if (shouldDisableLenis) {
     return () => undefined;
   }
 
@@ -134,13 +137,76 @@ async function initLenis() {
   };
 }
 
+function runWhenBrowserIsIdle(callback: () => void) {
+  if ("requestIdleCallback" in window) {
+    const requestIdleCallbackFn = window.requestIdleCallback as (
+      cb: () => void,
+      options?: { timeout?: number }
+    ) => number;
+
+    requestIdleCallbackFn(callback, { timeout: 3000 });
+    return;
+  }
+
+  globalThis.setTimeout(callback, 1200);
+}
+
 export function RuntimeBootstrap() {
   useEffect(() => {
     let cancelled = false;
+    let hasBooted = false;
+    let mobileFallbackTimeoutId = 0;
+    let removeMobileInteractionListeners = () => undefined;
+    let optionalScriptsLoaded = false;
+    let removeOptionalScriptListeners = () => undefined;
 
     prepareDocument();
 
-    const boot = async () => {
+    const loadOptionalScripts = () => {
+      if (optionalScriptsLoaded || cancelled) {
+        return;
+      }
+
+      optionalScriptsLoaded = true;
+
+      runWhenBrowserIsIdle(() => {
+        void (async () => {
+          for (const src of optionalVendorScripts) {
+            await loadScript(src);
+            if (cancelled) {
+              return;
+            }
+          }
+        })();
+      });
+    };
+
+    const setupOptionalScriptInteractionLoad = () => {
+      const onFirstInteraction = () => {
+        removeOptionalScriptListeners();
+        loadOptionalScripts();
+      };
+
+      const interactionEvents: Array<keyof WindowEventMap> = ["pointerdown", "touchstart", "keydown"];
+
+      removeOptionalScriptListeners = () => {
+        for (const eventName of interactionEvents) {
+          window.removeEventListener(eventName, onFirstInteraction);
+        }
+      };
+
+      for (const eventName of interactionEvents) {
+        window.addEventListener(eventName, onFirstInteraction, { once: true, passive: true });
+      }
+    };
+
+    const boot = async (_isMobileBoot: boolean) => {
+      if (hasBooted) {
+        return;
+      }
+
+      hasBooted = true;
+
       const lenisCleanup = await initLenis();
 
       if (cancelled) {
@@ -150,19 +216,7 @@ export function RuntimeBootstrap() {
 
       window.__awakeLenisCleanup = lenisCleanup;
 
-      await loadScript("/vendor/webfont.js");
-
-      if (cancelled) {
-        return;
-      }
-
-      window.WebFont?.load({
-        google: {
-          families: ["Instrument Serif:300,400,500,600,700", "Inter Tight:300,400,500,600,700"]
-        }
-      });
-
-      for (const src of vendorScripts) {
+      for (const src of coreVendorScripts) {
         await loadScript(src);
         if (cancelled) {
           return;
@@ -170,10 +224,65 @@ export function RuntimeBootstrap() {
       }
     };
 
-    void boot();
+    const queueBoot = (isMobileBoot: boolean) => {
+      runWhenBrowserIsIdle(() => {
+        if (!cancelled) {
+          void boot(isMobileBoot);
+        }
+      });
+    };
+
+    const isMobileRuntime =
+      window.matchMedia(MOBILE_MEDIA_QUERY).matches ||
+      window.matchMedia("(pointer: coarse)").matches;
+
+    setupOptionalScriptInteractionLoad();
+
+    if (isMobileRuntime) {
+      const onFirstInteraction = () => {
+        removeMobileInteractionListeners();
+        queueBoot(true);
+      };
+
+      const interactionEvents: Array<keyof WindowEventMap> = ["pointerdown", "touchstart", "keydown", "scroll"];
+
+      removeMobileInteractionListeners = () => {
+        for (const eventName of interactionEvents) {
+          window.removeEventListener(eventName, onFirstInteraction);
+        }
+
+        if (mobileFallbackTimeoutId) {
+          window.clearTimeout(mobileFallbackTimeoutId);
+          mobileFallbackTimeoutId = 0;
+        }
+      };
+
+      for (const eventName of interactionEvents) {
+        window.addEventListener(eventName, onFirstInteraction, { once: true, passive: true });
+      }
+
+      mobileFallbackTimeoutId = window.setTimeout(() => {
+        removeMobileInteractionListeners();
+        queueBoot(true);
+      }, 5000);
+    } else if (document.readyState === "complete") {
+      queueBoot(false);
+    } else {
+      const onWindowLoad = () => {
+        queueBoot(false);
+      };
+
+      window.addEventListener("load", onWindowLoad, { once: true });
+
+      removeMobileInteractionListeners = () => {
+        window.removeEventListener("load", onWindowLoad);
+      };
+    }
 
     return () => {
       cancelled = true;
+      removeMobileInteractionListeners();
+      removeOptionalScriptListeners();
       window.__awakeLenisCleanup?.();
       window.__awakeLenisCleanup = undefined;
     };

@@ -15,7 +15,7 @@ export function BrandStrip() {
             {[0, 1].map((group) => (
               <div key={group} className="static-marquee_logos">
                 {brandLogos.map((logo, index) => (
-                  <img key={`${group}-${index}`} width="260" loading="eager" alt="logo" src={logo} className="logo-2" />
+                  <img key={`${group}-${index}`} width="260" loading="lazy" alt="logo" src={logo} className="logo-2" />
                 ))}
               </div>
             ))}

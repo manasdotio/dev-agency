@@ -5,5 +5,5 @@ type AssetImageProps = Omit<ImageProps, "src"> & {
 };
 
 export function AssetImage({ src, alt, ...props }: AssetImageProps) {
-  return <Image unoptimized src={src} alt={alt} {...props} />;
+  return <Image src={src} alt={alt} {...props} />;
 }

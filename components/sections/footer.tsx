@@ -18,7 +18,7 @@ export function Footer() {
             <div className="div-block-42">
               {socialLinks.map((item) => (
                 <a key={item.href} href={item.href} className="footer-social-icon w-inline-block">
-                  <img src={item.icon} loading="lazy" alt={item.alt} />
+                  <img src={item.icon} loading="lazy" width="18" height="18" alt={item.alt} />
                 </a>
               ))}
             </div>

@@ -1,3 +1,4 @@
+import { AssetImage } from "@/components/shared/asset-image";
 import { workItems } from "@/lib/site-data";
 
 export function WorkShowcase() {
@@ -8,17 +9,18 @@ export function WorkShowcase() {
     <div key={item.title} data-w-id={id} style={{ opacity: 0 }} className={item.cardClass}>
       <div data-w-id="30921add-b727-7bcb-e20b-9b819761b4c1" className="small-card">
         <div className="div-block-196">
-          <img
+          <AssetImage
             src={item.image}
             loading="lazy"
             alt=""
+            width={624}
+            height={410}
             sizes="(max-width: 624px) 100vw, 624px"
-            srcSet={item.srcSet}
             className="avatar"
           />
           <a href="https://www.wrappixel.com/" target="_blank" rel="noreferrer" className="div-block-197 w-inline-block">
             <div className="div-block-198">
-              <img src="/images/69afb0934a0a9b77eaf02520_round-arrow-right.svg" loading="lazy" alt="" className="image-30" />
+              <img src="/images/69afb0934a0a9b77eaf02520_round-arrow-right.svg" loading="lazy" width="32" height="32" alt="" className="image-30" />
             </div>
           </a>
         </div>
