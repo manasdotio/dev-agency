@@ -24,9 +24,9 @@ export default function Page() {
       <WorkShowcase />
       {/* <Team /> */}
       <Testimonials />
-      <Pricing />
+      {/* <Pricing /> */}
       <Faq />
-      <Awards />
+      {/* <Awards /> */}
       <Cta />
       <Footer />
     </main>
