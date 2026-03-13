@@ -8,7 +8,7 @@ export function Hero() {
           Building bold brands with <span className="italic-span typing-text">thoughtful design</span>
         </h1>
 
-        <p data-w-id="aca08924-3373-f5fc-69ef-f496c3c5cc2e" style={{ opacity: 0 }} className="para-txt">
+        <p className="para-txt">
           At Awake, we help small startups tackle the world&apos;s biggest challenges with tailored
           solutions, guiding you from strategy to success in a competitive market.
         </p>
